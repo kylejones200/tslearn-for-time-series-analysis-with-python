@@ -250,7 +250,7 @@ def demonstrate_preprocessing():
     logger.info(f"Std of scaled data: {scaled.std():.4f}")
 
 
-def demonstrate_clustering():
+def demonstrate_clustering(plot: bool = False):
     """Demonstrate clustering techniques."""
     logger.info("\n" + "=" * 60)
     logger.info("Clustering Demonstration")
@@ -274,25 +274,26 @@ def demonstrate_clustering():
     logger.info(f"DTW K-Means clusters: {np.bincount(dtw_labels)}")
     
     # Visualize centroids
-    plt.figure(figsize=(12, 5))
+    if plot:
+        plt.figure(figsize=(12, 5))
     
-    plt.subplot(1, 2, 1)
-    for idx, center in enumerate(kshape_model.cluster_centers_):
-        plt.plot(center.ravel(), label=f"Cluster {idx}", linewidth=2)
-    plt.title("K-Shape Centroids")
-    plt.xlabel("Time")
-    plt.ylabel("Value")
-    plt.legend()
-    plt.subplot(1, 2, 2)
-    for idx, center in enumerate(dtw_model.cluster_centers_):
-        plt.plot(center.ravel(), label=f"Cluster {idx}", linewidth=2)
-    plt.title("DTW K-Means Centroids")
-    plt.xlabel("Time")
-    plt.ylabel("Value")
-    plt.legend()
-    plt.tight_layout()
-    plt.savefig("clustering_centroids.png", dpi=300)
-    plt.close()
+        plt.subplot(1, 2, 1)
+        for idx, center in enumerate(kshape_model.cluster_centers_):
+            plt.plot(center.ravel(), label=f"Cluster {idx}", linewidth=2)
+        plt.title("K-Shape Centroids")
+        plt.xlabel("Time")
+        plt.ylabel("Value")
+        plt.legend()
+        plt.subplot(1, 2, 2)
+        for idx, center in enumerate(dtw_model.cluster_centers_):
+            plt.plot(center.ravel(), label=f"Cluster {idx}", linewidth=2)
+        plt.title("DTW K-Means Centroids")
+        plt.xlabel("Time")
+        plt.ylabel("Value")
+        plt.legend()
+        plt.tight_layout()
+        plt.savefig("clustering_centroids.png", dpi=300)
+        plt.close()
     logger.info("Saved clustering visualization to 'clustering_centroids.png'")
 
 
