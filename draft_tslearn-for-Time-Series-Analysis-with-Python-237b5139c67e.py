@@ -229,9 +229,7 @@ def generate_sample_data(n_samples=100, n_timesteps=50, n_features=1):
 
 def demonstrate_preprocessing():
     """Demonstrate preprocessing techniques."""
-    logger.info("=" * 60)
     logger.info("Preprocessing Demonstration")
-    logger.info("=" * 60)
     
     # Generate sample data
     data = generate_sample_data(n_samples=10, n_timesteps=20)
@@ -252,9 +250,7 @@ def demonstrate_preprocessing():
 
 def demonstrate_clustering(plot: bool = False):
     """Demonstrate clustering techniques."""
-    logger.info("\n" + "=" * 60)
-    logger.info("Clustering Demonstration")
-    logger.info("=" * 60)
+    logger.info("=== Clustering Demonstration ===")
     
     X = generate_sample_data(n_samples=50, n_timesteps=40)
     
@@ -299,9 +295,7 @@ def demonstrate_clustering(plot: bool = False):
 
 def demonstrate_classification():
     """Demonstrate classification with proper cross-validation."""
-    logger.info("\n" + "=" * 60)
-    logger.info("Classification Demonstration")
-    logger.info("=" * 60)
+    logger.info("=== Classification Demonstration ===")
     
     X = generate_sample_data(n_samples=200, n_timesteps=50)
     y = np.random.randint(0, 2, size=200)
@@ -328,9 +322,7 @@ def demonstrate_classification():
 
 def demonstrate_dtw():
     """Demonstrate DTW distance calculation."""
-    logger.info("\n" + "=" * 60)
-    logger.info("DTW Distance Demonstration")
-    logger.info("=" * 60)
+    logger.info("=== DTW Distance Demonstration ===")
     
     ts1 = np.array([[1], [2], [3], [4], [5], [6]])
     ts2 = np.array([[2], [3], [4], [5], [6], [7]])
@@ -345,9 +337,7 @@ def demonstrate_dtw():
 
 def demonstrate_sax():
     """Demonstrate SAX feature extraction."""
-    logger.info("\n" + "=" * 60)
-    logger.info("SAX Feature Extraction Demonstration")
-    logger.info("=" * 60)
+    logger.info("=== SAX Feature Extraction Demonstration ===")
     
     X = generate_sample_data(n_samples=10, n_timesteps=50)
     
@@ -373,9 +363,7 @@ def main():
     demonstrate_dtw()
     demonstrate_sax()
     
-    logger.info("\n" + "=" * 60)
-    logger.info("All demonstrations completed!")
-    logger.info("=" * 60)
+    logger.info("=== All demonstrations completed! ===")
 
 
 if __name__ == "__main__":
