@@ -1,7 +1,7 @@
 # tslearn for Time Series Analysis with Python
 
-**Published:** draft
-**Medium:** [https://medium.com/@kyle-t-jones/tslearn-for-time-series-analysis-with-python-237b5139c67e](https://medium.com/@kyle-t-jones/tslearn-for-time-series-analysis-with-python-237b5139c67e)
+Published: draft
+Medium: [https://medium.com/@kyle-t-jones/tslearn-for-time-series-analysis-with-python-237b5139c67e](https://medium.com/@kyle-t-jones/tslearn-for-time-series-analysis-with-python-237b5139c67e)
 
 ## About
 
