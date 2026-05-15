@@ -348,7 +348,7 @@ def demonstrate_sax():
     
     logger.info(f"Original shape: {X.shape}")
     logger.info(f"SAX shape: {X_sax.shape}")
-    logger.info(f"Sample SAX representation (first 2 series):")
+    logger.info("Sample SAX representation (first 2 series):")
     for i in range(2):
         sax_str = ''.join(X_sax[i].ravel().astype(str))
         logger.info(f"  Series {i}: {sax_str[:50]}...")
