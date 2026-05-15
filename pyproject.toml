@@ -1,0 +1,10 @@
+[project]
+name = "tslearn-for-time-series-analysis-with-python"
+version = "0.1.0"
+requires-python = ">=3.12"
+dependencies = [
+    "matplotlib>=3.10.9",
+    "numpy>=2.4.4",
+    "scikit-learn>=1.8.0",
+    "tslearn>=0.8.1",
+]

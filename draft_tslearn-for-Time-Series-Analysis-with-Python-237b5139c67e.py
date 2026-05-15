@@ -1,27 +1,19 @@
 # Description: Short example for tslearn for Time Series Analysis with Python.
 
 
-
-from sklearn.model_selection import TimeSeriesSplit, cross_val_score
-from sklearn.pipeline import make_pipeline
-from tslearn.clustering import KShape
-from tslearn.clustering import TimeSeriesKMeans
-from tslearn.clustering import TimeSeriesKMeans, KShape
-from tslearn.metrics import dtw
-from tslearn.neighbors import KNeighborsTimeSeriesClassifier
-from tslearn.piecewise import SymbolicAggregateApproximation
-from tslearn.preprocessing import (
-    TimeSeriesScalerMeanVariance,
-    TimeSeriesResampler
-)
-from tslearn.preprocessing import TimeSeriesResampler
-from tslearn.preprocessing import TimeSeriesScalerMeanVariance
-from tslearn.preprocessing import TimeSeriesScalerMeanVariance, TimeSeriesResampler
 import logging
+
 import matplotlib.pyplot as plt
 import numpy as np
 import pandas as pd
 import seaborn as sns
+from sklearn.model_selection import TimeSeriesSplit, cross_val_score
+from sklearn.pipeline import make_pipeline
+from tslearn.clustering import KShape, TimeSeriesKMeans
+from tslearn.metrics import dtw
+from tslearn.neighbors import KNeighborsTimeSeriesClassifier
+from tslearn.piecewise import SymbolicAggregateApproximation
+from tslearn.preprocessing import TimeSeriesResampler, TimeSeriesScalerMeanVariance
 
 logger = logging.getLogger(__name__)
 logging.basicConfig(
@@ -30,13 +22,14 @@ logging.basicConfig(
 )
 
 
-
 # Three sequences, five time steps, one feature
-data = np.array([
-    [[1], [2], [3], [4], [5]],
-    [[2], [3], [4], [5], [6]],
-    [[3], [4], [5], [6], [7]],
-])
+data = np.array(
+    [
+        [[1], [2], [3], [4], [5]],
+        [[2], [3], [4], [5], [6]],
+        [[3], [4], [5], [6], [7]],
+    ]
+)
 
 logger.info(data.shape)  # (3, 5, 1)
 
@@ -55,7 +48,7 @@ X_train, X_test = X[:split_idx], X[split_idx:]
 y_train, y_test = y[:split_idx], y[split_idx:]
 
 scaler = TimeSeriesScalerMeanVariance()
-scaler.fit(X_train)           # learn scaling on train portion only
+scaler.fit(X_train)  # learn scaling on train portion only
 X_train_scaled = scaler.transform(X_train)
 X_test_scaled = scaler.transform(X_test)
 
@@ -117,7 +110,7 @@ logger.info(X_sax[:2])
 
 
 # Generate synthetic technology adoption data
-countries = ['USA', 'UK', 'GER', 'FRA', 'JPN', 'CHN', 'IND', 'BRA']
+countries = ["USA", "UK", "GER", "FRA", "JPN", "CHN", "IND", "BRA"]
 years = np.arange(2000, 2020)
 n_countries = len(countries)
 
@@ -128,25 +121,20 @@ for country in countries:
     base_rate = np.random.uniform(0.1, 0.5)
     trend = np.random.uniform(0.01, 0.05)
     noise = np.random.normal(0, 0.02, len(years))
-    
+
     # Create adoption curve
     adoption = base_rate + trend * np.arange(len(years)) + noise
     adoption = np.clip(adoption, 0, 1)  # Keep in [0, 1] range
-    
+
     for year, value in zip(years, adoption):
-        data_rows.append({
-            'country': country,
-            'year': year,
-            'adoption_rate': value
-        })
+        data_rows.append({"country": country, "year": year, "adoption_rate": value})
 
 df = pd.DataFrame(data_rows)
 
 # Pivot to time series format
-subset = (
-    df.pivot_table(index='country', columns='year', values='adoption_rate', aggfunc='mean')
-      .sort_index(axis='columns')
-)
+subset = df.pivot_table(
+    index="country", columns="year", values="adoption_rate", aggfunc="mean"
+).sort_index(axis="columns")
 
 # Forward-fill gaps, then replace any remaining missing values with zeros
 subset = subset.ffill(axis=1).bfill(axis=1).fillna(0.0)
@@ -183,17 +171,13 @@ plt.savefig("adoption_cluster_centroids.png", dpi=300)
 plt.close()
 
 # Plot a few sample trajectories per cluster
-sampled = (
-    pd.concat([subset, clusters], axis=1)
-      .groupby("cluster")
-      .head(3)
-)
+sampled = pd.concat([subset, clusters], axis=1).groupby("cluster").head(3)
 
 melted = (
     sampled.drop(columns="cluster")
-      .assign(cluster=sampled["cluster"])  
-      .reset_index(names="country")
-      .melt(id_vars=["country", "cluster"], var_name="year", value_name="adoption_rate")
+    .assign(cluster=sampled["cluster"])
+    .reset_index(names="country")
+    .melt(id_vars=["country", "cluster"], var_name="year", value_name="adoption_rate")
 )
 
 plt.figure(figsize=(12, 6))
@@ -210,7 +194,7 @@ sns.lineplot(
 plt.title("Sample Adoption Trajectories by Cluster")
 plt.ylabel("Adoption Rate")
 plt.xlabel("Year")
-plt.legend(title="Cluster", bbox_to_anchor=(1.05, 1), loc='upper left')
+plt.legend(title="Cluster", bbox_to_anchor=(1.05, 1), loc="upper left")
 plt.tight_layout()
 plt.savefig("adoption_sample_trajectories.png", dpi=300)
 plt.close()
@@ -229,16 +213,16 @@ def generate_sample_data(n_samples=100, n_timesteps=50, n_features=1):
 def demonstrate_preprocessing():
     """Demonstrate preprocessing techniques."""
     logger.info("Preprocessing Demonstration")
-    
+
     # Generate sample data
     data = generate_sample_data(n_samples=10, n_timesteps=20)
     logger.info(f"Original data shape: {data.shape}")
-    
+
     # Resampling
     resampler = TimeSeriesResampler(sz=30)
     resampled = resampler.fit_transform(data)
     logger.info(f"After resampling to 30 timesteps: {resampled.shape}")
-    
+
     # Scaling
     scaler = TimeSeriesScalerMeanVariance()
     scaled = scaler.fit_transform(data)
@@ -250,28 +234,23 @@ def demonstrate_preprocessing():
 def demonstrate_clustering(plot: bool = False):
     """Demonstrate clustering techniques."""
     logger.info("=== Clustering Demonstration ===")
-    
+
     X = generate_sample_data(n_samples=50, n_timesteps=40)
-    
+
     # K-Shape clustering
     kshape_model = KShape(n_clusters=3, random_state=42)
     kshape_labels = kshape_model.fit_predict(X)
     logger.info(f"K-Shape clusters: {np.bincount(kshape_labels)}")
-    
+
     # DTW-based K-Means
-    dtw_model = TimeSeriesKMeans(
-        n_clusters=3,
-        metric="dtw",
-        random_state=42,
-        n_init=5
-    )
+    dtw_model = TimeSeriesKMeans(n_clusters=3, metric="dtw", random_state=42, n_init=5)
     dtw_labels = dtw_model.fit_predict(X)
     logger.info(f"DTW K-Means clusters: {np.bincount(dtw_labels)}")
-    
+
     # Visualize centroids
     if plot:
         plt.figure(figsize=(12, 5))
-    
+
         plt.subplot(1, 2, 1)
         for idx, center in enumerate(kshape_model.cluster_centers_):
             plt.plot(center.ravel(), label=f"Cluster {idx}", linewidth=2)
@@ -295,23 +274,23 @@ def demonstrate_clustering(plot: bool = False):
 def demonstrate_classification():
     """Demonstrate classification with proper cross-validation."""
     logger.info("=== Classification Demonstration ===")
-    
+
     X = generate_sample_data(n_samples=200, n_timesteps=50)
     y = np.random.randint(0, 2, size=200)
-    
+
     # Create pipeline with proper preprocessing
     clf = make_pipeline(
         TimeSeriesScalerMeanVariance(),
-        KNeighborsTimeSeriesClassifier(n_neighbors=5, metric="dtw")
+        KNeighborsTimeSeriesClassifier(n_neighbors=5, metric="dtw"),
     )
-    
+
     # Time series cross-validation
     tscv = TimeSeriesSplit(n_splits=5)
-    scores = cross_val_score(clf, X, y, cv=tscv, scoring='accuracy')
-    
+    scores = cross_val_score(clf, X, y, cv=tscv, scoring="accuracy")
+
     logger.info(f"Cross-validation scores: {scores}")
     logger.info(f"Mean CV accuracy: {scores.mean():.4f} ± {scores.std():.4f}")
-    
+
     # Final evaluation on hold-out set
     train_idx, test_idx = list(tscv.split(X))[-1]
     clf.fit(X[train_idx], y[train_idx])
@@ -322,13 +301,13 @@ def demonstrate_classification():
 def demonstrate_dtw():
     """Demonstrate DTW distance calculation."""
     logger.info("=== DTW Distance Demonstration ===")
-    
+
     ts1 = np.array([[1], [2], [3], [4], [5], [6]])
     ts2 = np.array([[2], [3], [4], [5], [6], [7]])
-    
+
     distance = dtw(ts1, ts2)
     logger.info(f"DTW distance between ts1 and ts2: {distance:.4f}")
-    
+
     # Compare with Euclidean distance
     euclidean_dist = np.linalg.norm(ts1.ravel() - ts2.ravel())
     logger.info(f"Euclidean distance: {euclidean_dist:.4f}")
@@ -337,20 +316,17 @@ def demonstrate_dtw():
 def demonstrate_sax():
     """Demonstrate SAX feature extraction."""
     logger.info("=== SAX Feature Extraction Demonstration ===")
-    
+
     X = generate_sample_data(n_samples=10, n_timesteps=50)
-    
-    sax = SymbolicAggregateApproximation(
-        n_segments=10,
-        alphabet_size_avg=5
-    )
+
+    sax = SymbolicAggregateApproximation(n_segments=10, alphabet_size_avg=5)
     X_sax = sax.fit_transform(X)
-    
+
     logger.info(f"Original shape: {X.shape}")
     logger.info(f"SAX shape: {X_sax.shape}")
     logger.info("Sample SAX representation (first 2 series):")
     for i in range(2):
-        sax_str = ''.join(X_sax[i].ravel().astype(str))
+        sax_str = "".join(X_sax[i].ravel().astype(str))
         logger.info(f"  Series {i}: {sax_str[:50]}...")
 
 
@@ -362,7 +338,7 @@ def main():
     demonstrate_classification()
     demonstrate_dtw()
     demonstrate_sax()
-    
+
     logger.info("=== All demonstrations completed! ===")
 
 
