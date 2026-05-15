@@ -117,7 +117,6 @@ logger.info(X_sax[:2])
 
 
 # Generate synthetic technology adoption data
-np.random.seed(42)
 countries = ['USA', 'UK', 'GER', 'FRA', 'JPN', 'CHN', 'IND', 'BRA']
 years = np.arange(2000, 2020)
 n_countries = len(countries)
@@ -356,6 +355,7 @@ def demonstrate_sax():
 
 
 def main():
+    np.random.seed(42)
     """Run all demonstrations."""
     demonstrate_preprocessing()
     demonstrate_clustering()
