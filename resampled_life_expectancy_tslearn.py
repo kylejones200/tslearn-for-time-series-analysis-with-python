@@ -22,7 +22,7 @@ def main():
 
 
     data_path = Path(
-        "/Users/kylejonespatricia/time_series/WIP/utilities/data/Hierarchical_Amtrak_Ridership.csv"
+        "data/Hierarchical_Amtrak_Ridership.csv"
     )
     df = read_csv(data_path)
     logger.info(df.head())
