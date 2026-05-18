@@ -1,6 +1,5 @@
 # Description: Short example for tslearn for Time Series Analysis with Python.
 
-
 import logging
 
 import matplotlib.pyplot as plt
@@ -21,7 +20,6 @@ logging.basicConfig(
     format="%(asctime)s [%(levelname)s] %(name)s: %(message)s",
 )
 
-
 # Three sequences, five time steps, one feature
 data = np.array(
     [
@@ -33,11 +31,9 @@ data = np.array(
 
 logger.info(data.shape)  # (3, 5, 1)
 
-
 resampler = TimeSeriesResampler(sz=10)
 resampled = resampler.fit_transform(data)
 logger.info(resampled.shape)  # (3, 10, 1)
-
 
 X = np.random.rand(200, 50, 1)
 y = np.random.randint(0, 2, size=200)
@@ -52,12 +48,10 @@ scaler.fit(X_train)  # learn scaling on train portion only
 X_train_scaled = scaler.transform(X_train)
 X_test_scaled = scaler.transform(X_test)
 
-
 pipeline = make_pipeline(
     TimeSeriesScalerMeanVariance(),
     # downstream estimator (added later)
 )
-
 
 X = np.random.rand(100, 50, 1)
 model = KShape(n_clusters=3, random_state=42)
@@ -68,14 +62,12 @@ for centroid in model.cluster_centers_:
 plt.title("K-Shape cluster centroids")
 plt.show()
 
-
 dtw_model = TimeSeriesKMeans(
     n_clusters=3,
     metric="dtw",
     random_state=42,
 )
 labels = dtw_model.fit_predict(X)
-
 
 X = np.random.rand(200, 50, 1)
 y = np.random.randint(0, 2, size=200)
@@ -94,12 +86,10 @@ train_idx, test_idx = list(tscv.split(X))[-1]
 clf.fit(X[train_idx], y[train_idx])
 logger.info(f"Hold-out accuracy: {clf.score(X[test_idx], y[test_idx]):.2f}")
 
-
 ts1 = np.array([[1], [2], [3], [4], [5]])
 ts2 = np.array([[2], [3], [4], [5], [6]])
 
 logger.info(f"DTW distance: {dtw(ts1, ts2):.2f}")
-
 
 sax = SymbolicAggregateApproximation(
     n_segments=5,
@@ -107,7 +97,6 @@ sax = SymbolicAggregateApproximation(
 )
 X_sax = sax.fit_transform(X)
 logger.info(X_sax[:2])
-
 
 # Generate synthetic technology adoption data
 countries = ["USA", "UK", "GER", "FRA", "JPN", "CHN", "IND", "BRA"]
@@ -121,11 +110,9 @@ for country in countries:
     base_rate = np.random.uniform(0.1, 0.5)
     trend = np.random.uniform(0.01, 0.05)
     noise = np.random.normal(0, 0.02, len(years))
-
     # Create adoption curve
     adoption = base_rate + trend * np.arange(len(years)) + noise
     adoption = np.clip(adoption, 0, 1)  # Keep in [0, 1] range
-
     for year, value in zip(years, adoption):
         data_rows.append({"country": country, "year": year, "adoption_rate": value})
 
@@ -213,16 +200,13 @@ def generate_sample_data(n_samples=100, n_timesteps=50, n_features=1):
 def demonstrate_preprocessing():
     """Demonstrate preprocessing techniques."""
     logger.info("Preprocessing Demonstration")
-
     # Generate sample data
     data = generate_sample_data(n_samples=10, n_timesteps=20)
     logger.info(f"Original data shape: {data.shape}")
-
     # Resampling
     resampler = TimeSeriesResampler(sz=30)
     resampled = resampler.fit_transform(data)
     logger.info(f"After resampling to 30 timesteps: {resampled.shape}")
-
     # Scaling
     scaler = TimeSeriesScalerMeanVariance()
     scaled = scaler.fit_transform(data)
@@ -234,23 +218,18 @@ def demonstrate_preprocessing():
 def demonstrate_clustering(plot: bool = False):
     """Demonstrate clustering techniques."""
     logger.info("=== Clustering Demonstration ===")
-
     X = generate_sample_data(n_samples=50, n_timesteps=40)
-
     # K-Shape clustering
     kshape_model = KShape(n_clusters=3, random_state=42)
     kshape_labels = kshape_model.fit_predict(X)
     logger.info(f"K-Shape clusters: {np.bincount(kshape_labels)}")
-
     # DTW-based K-Means
     dtw_model = TimeSeriesKMeans(n_clusters=3, metric="dtw", random_state=42, n_init=5)
     dtw_labels = dtw_model.fit_predict(X)
     logger.info(f"DTW K-Means clusters: {np.bincount(dtw_labels)}")
-
     # Visualize centroids
     if plot:
         plt.figure(figsize=(12, 5))
-
         plt.subplot(1, 2, 1)
         for idx, center in enumerate(kshape_model.cluster_centers_):
             plt.plot(center.ravel(), label=f"Cluster {idx}", linewidth=2)
@@ -274,23 +253,18 @@ def demonstrate_clustering(plot: bool = False):
 def demonstrate_classification():
     """Demonstrate classification with proper cross-validation."""
     logger.info("=== Classification Demonstration ===")
-
     X = generate_sample_data(n_samples=200, n_timesteps=50)
     y = np.random.randint(0, 2, size=200)
-
     # Create pipeline with proper preprocessing
     clf = make_pipeline(
         TimeSeriesScalerMeanVariance(),
         KNeighborsTimeSeriesClassifier(n_neighbors=5, metric="dtw"),
     )
-
     # Time series cross-validation
     tscv = TimeSeriesSplit(n_splits=5)
     scores = cross_val_score(clf, X, y, cv=tscv, scoring="accuracy")
-
     logger.info(f"Cross-validation scores: {scores}")
     logger.info(f"Mean CV accuracy: {scores.mean():.4f} ± {scores.std():.4f}")
-
     # Final evaluation on hold-out set
     train_idx, test_idx = list(tscv.split(X))[-1]
     clf.fit(X[train_idx], y[train_idx])
@@ -301,13 +275,10 @@ def demonstrate_classification():
 def demonstrate_dtw():
     """Demonstrate DTW distance calculation."""
     logger.info("=== DTW Distance Demonstration ===")
-
     ts1 = np.array([[1], [2], [3], [4], [5], [6]])
     ts2 = np.array([[2], [3], [4], [5], [6], [7]])
-
     distance = dtw(ts1, ts2)
     logger.info(f"DTW distance between ts1 and ts2: {distance:.4f}")
-
     # Compare with Euclidean distance
     euclidean_dist = np.linalg.norm(ts1.ravel() - ts2.ravel())
     logger.info(f"Euclidean distance: {euclidean_dist:.4f}")
@@ -316,12 +287,9 @@ def demonstrate_dtw():
 def demonstrate_sax():
     """Demonstrate SAX feature extraction."""
     logger.info("=== SAX Feature Extraction Demonstration ===")
-
     X = generate_sample_data(n_samples=10, n_timesteps=50)
-
     sax = SymbolicAggregateApproximation(n_segments=10, alphabet_size_avg=5)
     X_sax = sax.fit_transform(X)
-
     logger.info(f"Original shape: {X.shape}")
     logger.info(f"SAX shape: {X_sax.shape}")
     logger.info("Sample SAX representation (first 2 series):")
@@ -338,7 +306,6 @@ def main():
     demonstrate_classification()
     demonstrate_dtw()
     demonstrate_sax()
-
     logger.info("=== All demonstrations completed! ===")
 
 

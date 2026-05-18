@@ -12,69 +12,44 @@ from tslearn.preprocessing import TimeSeriesResampler, TimeSeriesScalerMeanVaria
 
 def keep_stations_with_a_reasonable_amount_of_histor() -> None:
     logger = logging.getLogger(__name__)
-
     logging.basicConfig(
         level=logging.INFO, format="%(asctime)s [%(levelname)s] %(name)s: %(message)s"
     )
-
     data_path = Path("data/Hierarchical_Amtrak_Ridership.csv")
-
     df = read_csv(data_path)
-
     logger.info(df.head())
-
     pivot = (
         df.groupby(["station_id", "year"])["Ridership"]
         .sum()
         .unstack(fill_value=0.0)
         .sort_index(axis="columns")
     )
-
     pivot = pivot.loc[pivot.count(axis=1) >= 10]
-
     pivot = pivot.ffill(axis=1).bfill(axis=1).fillna(0.0)
-
     X = pivot.to_numpy()[:, :, None]
-
     scaler = TimeSeriesScalerMeanVariance()
-
     X_scaled = scaler.fit_transform(X)
-
     resampler = TimeSeriesResampler(sz=20)
-
     X_resampled = resampler.fit_transform(X_scaled)
-
     model = TimeSeriesKMeans(n_clusters=6, metric="dtw", random_state=42, n_init=4)
-
     labels = model.fit_predict(X_resampled)
-
     clusters = pd.Series(labels, index=pivot.index, name="cluster")
-
     logger.info(clusters.value_counts())
 
 
 def figure() -> None:
     plt.figure(figsize=(10, 5))
-
     for idx, center in enumerate(model.cluster_centers_):
         plt.plot(center.ravel(), label=f"Cluster {idx}")
 
     plt.title("Amtrak Ridership Trajectory Centroids")
-
     plt.xlabel("Resampled Year Index")
-
     plt.ylabel("Scaled Ridership")
-
     plt.legend()
-
     plt.tight_layout()
-
     plt.savefig("amtrak_cluster_centroids.png", dpi=300)
-
     plt.close()
-
     sampled = pd.concat([pivot, clusters], axis=1).groupby("cluster").head(5)
-
     melted = (
         sampled.drop(columns="cluster")
         .assign(cluster=sampled["cluster"].values)
@@ -83,9 +58,7 @@ def figure() -> None:
             id_vars=["station_id", "cluster"], var_name="year", value_name="ridership"
         )
     )
-
     plt.figure(figsize=(12, 6))
-
     sns.lineplot(
         data=melted,
         x="year",
@@ -95,25 +68,16 @@ def figure() -> None:
         estimator=None,
         alpha=0.6,
     )
-
     plt.title("Representative Station Trajectories")
-
     plt.ylabel("Ridership (boardings + alightings)")
-
     plt.tight_layout()
-
     plt.savefig("amtrak_sample_trajectories.png", dpi=300)
-
     plt.close()
-
     sax = SymbolicAggregateApproximation(n_segments=8, alphabet_size_avg=5)
-
     X_sax = sax.fit_transform(X_resampled)
-
     sax_strings = pd.Series(
         ["".join(seq) for seq in X_sax.reshape(len(X_sax), -1)], index=pivot.index
     )
-
     logger.info(sax_strings.head())
 
 
